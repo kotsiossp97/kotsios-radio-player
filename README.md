@@ -31,7 +31,7 @@ The project is organized as follows:
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v16 or later)
+- [Node.js](https://nodejs.org/) (v20 or later)
 - [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
 
 ### Installation

@@ -28,9 +28,30 @@ jobs:
       - name: Build Electron app for Windows
         run: npm run build:win
 
-      # Upload build artifacts
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+      # Create a Git tag for the version build
+      - name: Create Git tag
+        id: tag
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          git tag -a "v$VERSION" -m "Release v$VERSION"
+          git push origin "v$VERSION"
+
+      # Create a GitHub release and attach artifacts
+      - name: Create GitHub release
+        uses: actions/create-release@v1
+        id: create_release
         with:
-          name: windows-build
-          path: dist/*.exe
+          tag_name: ${{ steps.tag.outputs.VERSION }}
+          release_name: Release ${{ steps.tag.outputs.VERSION }}
+          body: |
+            Release of version ${{ steps.tag.outputs.VERSION }}.
+          draft: false
+          prerelease: false
+
+      - name: Upload build artifacts to release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/*.exe
+          asset_name: windows-build.exe
+          asset_content_type: application/vnd.microsoft.portable-executable

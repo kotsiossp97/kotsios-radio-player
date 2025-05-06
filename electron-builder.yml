@@ -1,14 +1,14 @@
-appId: com.electron.app
+appId: com.kotsiossp97.kotsiosRadioPlayer
 productName: kotsios-radio-player
 directories:
   buildResources: build
 files:
-  - '!**/.vscode/*'
-  - '!src/*'
-  - '!electron.vite.config.{js,ts,mjs,cjs}'
-  - '!{.eslintcache,eslint.config.mjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
-  - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
-  - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
+  - "!**/.vscode/*"
+  - "!src/*"
+  - "!electron.vite.config.{js,ts,mjs,cjs}"
+  - "!{.eslintcache,eslint.config.mjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}"
+  - "!{.env,.env.*,.npmrc,pnpm-lock.yaml}"
+  - "!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}"
 asarUnpack:
   - resources/**
 win:
@@ -33,7 +33,7 @@ linux:
     - AppImage
     - snap
     - deb
-  maintainer: electronjs.org
+  maintainer: kotsiossp97
   category: Utility
 appImage:
   artifactName: ${name}-${version}.${ext}
