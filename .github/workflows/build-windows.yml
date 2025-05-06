@@ -28,13 +28,14 @@ jobs:
       - name: Build Electron app for Windows
         run: npm run build:win
 
-      # Create a Git tag for the version build
+      # Create a Git tag for the version build (Windows-compatible)
       - name: Create Git tag
         id: tag
         run: |
-          VERSION=$(node -p "require('./package.json').version")
-          git tag -a "v$VERSION" -m "Release v$VERSION"
-          git push origin "v$VERSION"
+          $version = (Get-Content -Raw -Path package.json | ConvertFrom-Json).version
+          git tag -a "v$version" -m "Release v$version"
+          git push origin "v$version"
+        shell: pwsh
 
       # Create a GitHub release and attach artifacts
       - name: Create GitHub release
