@@ -37,37 +37,36 @@ jobs:
           "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
         shell: pwsh
 
-      # Create a Git tag for the version build
-      - name: Create Git tag
-        id: get_tag
-        shell: bash
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          VERSION="v${{ steps.get_version.outputs.version}}"
-          git tag -a "v$VERSION" -m "Release v$VERSION"
-          git push origin "v$VERSION"
+      # # Create a Git tag for the version build
+      # - name: Create Git tag
+      #   id: get_tag
+      #   shell: bash
+      #   run: |
+      #     git config --local user.email "action@github.com"
+      #     git config --local user.name "GitHub Action"
+      #     VERSION="v${{ steps.get_version.outputs.version}}"
+      #     git tag -a "v$VERSION" -m "Release v$VERSION"
+      #     git push origin "v$VERSION"
 
-      # Create a GitHub release and attach artifacts
-      - name: Create GitHub release
-        uses: actions/create-release@v1
-        id: create_release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # # Create a GitHub release and attach artifacts
+      # - name: Create GitHub release
+      #   uses: actions/create-release@v1
+      #   id: create_release
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     tag_name: ${{ steps.get_version.outputs.version }}
+      #     release_name: Release v${{ steps.get_version.outputs.version }}
+      #     body: |
+      #       Release of version ${{ steps.get_version.outputs.version }}.
+      #     draft: false
+      #     prerelease: false
+      - name: Create release
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.get_version.outputs.version }}
-          release_name: Release v${{ steps.get_version.outputs.version }}
+          tag_name: v${{ steps.get_version.outputs.version }}
+          files: |
+            dist/*.exe
+          name: Release v${{ steps.get_version.outputs.version }}
           body: |
             Release of version ${{ steps.get_version.outputs.version }}.
-          draft: false
-          prerelease: false
-
-      - name: Upload build artifacts to release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/*.exe
-          asset_name: windows-build.exe
-          asset_content_type: application/vnd.microsoft.portable-executable
