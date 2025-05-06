@@ -28,7 +28,7 @@ jobs:
       - name: Build Electron app for Windows
         run: npm run build:win
 
-      # Create a Git tag for the version build (Windows-compatible)
+      # Get the version build (Windows-compatible)
       - name: Get version from package.json
         id: get_version
         run: |
@@ -37,16 +37,16 @@ jobs:
           "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
         shell: pwsh
 
-      - name: Create tag
-        uses: actions/github-script@v5
-        with:
-          script: |
-            github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: 'refs/tags/${{steps.get_version.outputs.version}}',
-              sha: context.sha
-            })
+      # Create a Git tag for the version build
+      - name: Create Git tag
+        id: get_tag
+        shell: bash
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          VERSION="v${{ steps.get_version.outputs.version}}"
+          git tag -a "v$VERSION" -m "Release v$VERSION"
+          git push origin "v$VERSION"
 
       # Create a GitHub release and attach artifacts
       - name: Create GitHub release
@@ -54,7 +54,7 @@ jobs:
         id: create_release
         with:
           tag_name: ${{ steps.get_version.outputs.version }}
-          release_name: Release ${{ steps.get_version.outputs.version }}
+          release_name: Release v${{ steps.get_version.outputs.version }}
           body: |
             Release of version ${{ steps.get_version.outputs.version }}.
           draft: false
