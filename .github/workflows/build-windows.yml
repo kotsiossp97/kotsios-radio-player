@@ -52,6 +52,8 @@ jobs:
       - name: Create GitHub release
         uses: actions/create-release@v1
         id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.get_version.outputs.version }}
           release_name: Release v${{ steps.get_version.outputs.version }}
@@ -62,6 +64,8 @@ jobs:
 
       - name: Upload build artifacts to release
         uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: dist/*.exe
