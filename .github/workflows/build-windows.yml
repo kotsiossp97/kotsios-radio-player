@@ -33,6 +33,8 @@ jobs:
         id: get_version
         run: |
           $version = (Get-Content -Raw -Path package.json | ConvertFrom-Json).version
+          Write-Host "Detected Version: $version"
+          "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
         shell: pwsh
 
       - name: Create tag
