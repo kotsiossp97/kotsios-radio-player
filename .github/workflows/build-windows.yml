@@ -29,23 +29,32 @@ jobs:
         run: npm run build:win
 
       # Create a Git tag for the version build (Windows-compatible)
-      - name: Create Git tag
-        id: tag
+      - name: Get version from package.json
+        id: get_version
         run: |
           $version = (Get-Content -Raw -Path package.json | ConvertFrom-Json).version
-          git tag -a "v$version" -m "Release v$version"
-          git push origin "v$version"
         shell: pwsh
+
+      - name: Create tag
+        uses: actions/github-script@v5
+        with:
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/${{steps.get_version.outputs.version}}',
+              sha: context.sha
+            })
 
       # Create a GitHub release and attach artifacts
       - name: Create GitHub release
         uses: actions/create-release@v1
         id: create_release
         with:
-          tag_name: ${{ steps.tag.outputs.VERSION }}
-          release_name: Release ${{ steps.tag.outputs.VERSION }}
+          tag_name: ${{ steps.get_version.outputs.version }}
+          release_name: Release ${{ steps.get_version.outputs.version }}
           body: |
-            Release of version ${{ steps.tag.outputs.VERSION }}.
+            Release of version ${{ steps.get_version.outputs.version }}.
           draft: false
           prerelease: false
 
