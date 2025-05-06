@@ -1,0 +1,36 @@
+name: Build Windows Electron App
+
+on:
+  push:
+    paths:
+      - "package.json" # Trigger the workflow when package.json changes (e.g., version update)
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16 # Ensure compatibility with your project
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Build the Electron app
+      - name: Build Electron app for Windows
+        run: npm run build:win
+
+      # Upload build artifacts
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: dist/ # Adjust this path to match your build output directory
