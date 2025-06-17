@@ -4,6 +4,7 @@ import IcecastMetadataPlayer, { IcyMetadata } from "icecast-metadata-player";
 import { ERadioAppActions } from "../reducers/RadioAppReducer";
 import { fetchCurrentRythmosData } from "../utils/rythmos";
 import { EPlayerState } from "../types/player";
+import { handleGreekDecode } from "../utils/encoding";
 
 const useIcecastStream = (
   audioRef: React.RefObject<HTMLAudioElement | null>,
@@ -52,12 +53,17 @@ const useIcecastStream = (
             type: ERadioAppActions.SET_STATE,
             payload: {
               currentMetadata: {
-                title:
+                title: handleGreekDecode(
                   params.get("title") ||
-                  metadata?.StreamTitle ||
-                  "Unknown Song",
-                artist: params.get("artist") || "Unknown Artist",
-                album: params.get("album") || "Unknown Album",
+                    metadata?.StreamTitle ||
+                    "Unknown Song",
+                ),
+                artist: handleGreekDecode(
+                  params.get("artist") || "Unknown Artist",
+                ),
+                album: handleGreekDecode(
+                  params.get("album") || "Unknown Album",
+                ),
                 duration: params.get("duration") ?? undefined,
                 songtype: params.get("songtype") ?? undefined,
                 overlay: params.get("overlay") ?? undefined,
@@ -73,7 +79,7 @@ const useIcecastStream = (
           type: ERadioAppActions.SET_STATE,
           payload: {
             currentMetadata: {
-              title: metadata?.StreamTitle || "Unknown Song",
+              title: handleGreekDecode(metadata?.StreamTitle || "Unknown Song"),
             },
           },
         });
